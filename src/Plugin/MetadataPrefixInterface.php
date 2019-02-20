@@ -9,14 +9,29 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface MetadataPrefixInterface extends PluginInspectionInterface {
 
+  /**
+   *
+   */
   public function getElements(): array;
 
+  /**
+   *
+   */
   public function getRootNodeName(): string;
 
+  /**
+   *
+   */
   public function getRootNodeAttributes(): array;
 
+  /**
+   *
+   */
   public function getSchema(): string;
 
+  /**
+   *
+   */
   public function getNamespace(): string;
 
 }

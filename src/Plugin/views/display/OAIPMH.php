@@ -4,20 +4,15 @@ namespace Drupal\views_oai_pmh\Plugin\views\display;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableResponse;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\views\Plugin\views\display\ResponseDisplayPluginInterface;
 use Drupal\views\Render\ViewsRenderPipelineMarkup;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\display\PathPluginBase;
+use Drupal\views_oai_pmh\Service\Repository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-
 
 /**
  *
@@ -61,6 +56,9 @@ class OAIPMH extends PathPluginBase {
 
   protected $metadataPrefix = 'oai_dc';
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteProviderInterface $route_provider, StateInterface $state, RendererInterface $renderer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $route_provider, $state);
 
@@ -107,6 +105,9 @@ class OAIPMH extends PathPluginBase {
     return $options;
   }
 
+  /**
+   *
+   */
   public function optionsSummary(&$categories, &$options) {
     parent::optionsSummary($categories, $options);
     $categories['page']['title'] = $this->t('OAI-PMH settings');
@@ -114,6 +115,9 @@ class OAIPMH extends PathPluginBase {
     $options['title']['title'] = $this->t('Repository name');
   }
 
+  /**
+   *
+   */
   public static function buildResponse($view_id, $display_id, array $args = []) {
     $build = static::buildBasicRenderable($view_id, $display_id, $args);
 
@@ -163,10 +167,12 @@ class OAIPMH extends PathPluginBase {
     return $build;
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function execute() {
+    $this->view->setCurrentPage($this->pageByResumptionToken());
+
     parent::execute();
 
     return $this->view->render();
@@ -182,18 +188,58 @@ class OAIPMH extends PathPluginBase {
     return $this->view->render();
   }
 
+  /**
+   *
+   */
   public function initDisplay(ViewExecutable $view, array &$display, array &$options = NULL) {
     parent::initDisplay($view, $display, $options);
+
+    if (!$prefix = $this->getMetadataPrefixByToken()) {
+      $prefix = 'oai_dc';
+    }
 
     $this->metadataPrefix = $this->view
       ->getRequest()
       ->query
-      ->get('metadataPrefix', 'oai_dc');
-
+      ->get('metadataPrefix', $prefix);
   }
 
+  /**
+   *
+   */
   public function getCurrentMetadataPrefix() {
     return $this->metadataPrefix;
   }
 
+  private function pageByResumptionToken() {
+    $token = $this->view->getRequest()
+      ->query
+      ->get('resumptionToken', NULL);
+
+    if ($token) {
+      /** @var Repository $repository */
+      $repository = \Drupal::service('views_oai_pmh.repository');
+      $paginator = $repository->decodeResumptionToken($token);
+
+      return $paginator['offset'];
+    }
+
+    return 0;
+  }
+
+  private function getMetadataPrefixByToken() {
+    $token = $this->view->getRequest()
+      ->query
+      ->get('resumptionToken', NULL);
+
+    if ($token) {
+      /** @var Repository $repository */
+      $repository = \Drupal::service('views_oai_pmh.repository');
+      $paginator = $repository->decodeResumptionToken($token);
+
+      return $paginator['metadataPrefix'];
+    }
+
+    return NULL;
+  }
 }

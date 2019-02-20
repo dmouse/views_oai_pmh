@@ -6,7 +6,8 @@ use Drupal\views_oai_pmh\Plugin\MetadataPrefixInterface;
 use Drupal\Component\Plugin\PluginBase;
 
 /**
- * Class DublinCore
+ * Class DublinCore.
+ *
  * @MetadataPrefix(
  *   id     = "oai_dc",
  *   label  = "Dublin Core",
@@ -15,18 +16,30 @@ use Drupal\Component\Plugin\PluginBase;
  */
 class DublinCore extends PluginBase implements MetadataPrefixInterface {
 
+  /**
+   *
+   */
   public function getSchema(): string {
     return 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd';
   }
 
+  /**
+   *
+   */
   public function getNamespace(): string {
     return 'http://www.openarchives.org/OAI/2.0/oai_dc/';
   }
 
+  /**
+   *
+   */
   public function getRootNodeName(): string {
     return 'oai_dc:dc';
   }
 
+  /**
+   *
+   */
   public function getRootNodeAttributes(): array {
     return [
       '@xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
@@ -36,6 +49,9 @@ class DublinCore extends PluginBase implements MetadataPrefixInterface {
     ];
   }
 
+  /**
+   *
+   */
   public function getElements(): array {
     return [
       'none'           => t('- None -'),

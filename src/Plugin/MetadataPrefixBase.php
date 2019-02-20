@@ -11,5 +11,4 @@ abstract class MetadataPrefixBase extends PluginBase implements MetadataPrefixIn
 
 
   // Add common methods and abstract methods for your plugin type here.
-
 }

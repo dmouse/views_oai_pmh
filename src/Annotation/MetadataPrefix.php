@@ -32,5 +32,5 @@ class MetadataPrefix extends Plugin {
   public $label;
 
   public $prefix;
-  
+
 }

@@ -11,7 +11,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class MetadataPrefixManager extends DefaultPluginManager {
 
-
   /**
    * Constructs a new MetadataPrefixManager object.
    *

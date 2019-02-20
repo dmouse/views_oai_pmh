@@ -4,5 +4,5 @@ description: Views plugins to publish data through the OAI-PMH protocol.
 core: 8.x
 package: Views
 dependencies:
-  - views
-  - serialization
+  - drupal:views
+  - drupal:serialization
